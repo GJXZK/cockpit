@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Echart from "@/components/common/Echart.vue";
 import ChartHeader from "@/components/common/ChartHeader.vue";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 
 const chartRef = ref<HTMLDivElement | null>(null);
 
@@ -126,33 +126,38 @@ const chartOptions: echarts.EChartsOption = {
 <template>
   <div class="w-full h-full">
     <ChartHeader title="冷端状态诊断" />
+    <div class="frame-bg">
+      <!-- 环境数据行 -->
+      <div class="flex justify-between items-cente rounded-lg pt-2 mx-8">
+        <div class="flex items-center space-x-2">
+          <span class="text-blue-400">🌡️</span>
+          <span class="text-white text-[14px]"
+            >环境温度：{{ envData.temperature }}</span
+          >
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-green-400">📊</span>
+          <span class="text-white text-[14px]"
+            >气压：{{ envData.pressure }}</span
+          >
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-cyan-400">💧</span>
+          <span class="text-white text-[14px]"
+            >湿度：{{ envData.humidity }}</span
+          >
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-yellow-400">💨</span>
+          <span class="text-white text-[14px]"
+            >风速：{{ envData.windSpeed }}</span
+          >
+        </div>
+      </div>
 
-    <!-- 环境数据行 -->
-    <div class="flex justify-between items-cente rounded-lg my-2 mr-8">
-      <div class="flex items-center space-x-2">
-        <span class="text-blue-400">🌡️</span>
-        <span class="text-white text-[14px]"
-          >环境温度：{{ envData.temperature }}</span
-        >
+      <div class="chart-box">
+        <Echart :options="chartOptions" theme="dark" ref="chartRef" />
       </div>
-      <div class="flex items-center space-x-2">
-        <span class="text-green-400">📊</span>
-        <span class="text-white text-[14px]">气压：{{ envData.pressure }}</span>
-      </div>
-      <div class="flex items-center space-x-2">
-        <span class="text-cyan-400">💧</span>
-        <span class="text-white text-[14px]">湿度：{{ envData.humidity }}</span>
-      </div>
-      <div class="flex items-center space-x-2">
-        <span class="text-yellow-400">💨</span>
-        <span class="text-white text-[14px]"
-          >风速：{{ envData.windSpeed }}</span
-        >
-      </div>
-    </div>
-
-    <div class="chart-box">
-      <Echart :options="chartOptions" theme="dark" ref="chartRef" />
     </div>
   </div>
 </template>
@@ -160,6 +165,14 @@ const chartOptions: echarts.EChartsOption = {
 <style scoped>
 .chart-box {
   width: 90%;
-  height: calc(90% - 30px);
+  height: calc(100% - 45px);
+}
+.frame-bg {
+  width: 100%;
+  height: calc(100% - 30px);
+  background-image: url("@/assets/picture/frame.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
 }
 </style>

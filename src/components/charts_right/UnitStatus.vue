@@ -120,27 +120,26 @@ const chartOptions = ref<EChartsOption>({
 <template>
   <div class="w-full h-full">
     <ChartHeader title="机组状态诊断" />
+    <div class="frame-bg">
+      <!-- HDI状态说明 -->
+      <div class="flex justify-center items-center space-x-6 mx-2 pt-2">
+        <div class="flex items-center space-x-1">
+          <span class="text-green-400">●</span>
+          <span class="text-white text-[14px]">HDI 0-0.3 健康</span>
+        </div>
+        <div class="flex items-center space-x-1">
+          <span class="text-yellow-400">●</span>
+          <span class="text-white text-[14px]">HDI 0.3-0.6 异常</span>
+        </div>
+        <div class="flex items-center space-x-1">
+          <span class="text-orange-400">●</span>
+          <span class="text-white text-[14px]">HDI>0.6 预警</span>
+        </div>
+      </div>
 
-    <!-- HDI状态说明 -->
-    <div
-      class="flex justify-center items-center space-x-6 mx-2 mt-2"
-    >
-      <div class="flex items-center space-x-1">
-        <span class="text-green-400">●</span>
-        <span class="text-white text-[14px]">HDI 0-0.3 健康</span>
+      <div class="chart-box">
+        <Echart :options="chartOptions" theme="dark" />
       </div>
-      <div class="flex items-center space-x-1">
-        <span class="text-yellow-400">●</span>
-        <span class="text-white text-[14px]">HDI 0.3-0.6 异常</span>
-      </div>
-      <div class="flex items-center space-x-1">
-        <span class="text-orange-400">●</span>
-        <span class="text-white text-[14px]">HDI>0.6 预警</span>
-      </div>
-    </div>
-
-    <div class="chart-box">
-      <Echart :options="chartOptions" theme="dark" />
     </div>
   </div>
 </template>
@@ -148,6 +147,14 @@ const chartOptions = ref<EChartsOption>({
 <style scoped>
 .chart-box {
   width: 100%;
-  height: calc(90% - 40px);
+  height: calc(100% - 40px);
+}
+.frame-bg {
+  width: 100%;
+  height: calc(100% - 35px);
+  background-image: url("@/assets/picture/frame.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
 }
 </style>

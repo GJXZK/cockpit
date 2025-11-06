@@ -6,7 +6,7 @@ import { ref } from "vue";
 
 const chartOptions = ref<EChartsOption>({
   backgroundColor: "transparent",
-  grid: { top: 30, bottom: 20, left: 20, right: 40 },
+  grid: { top: 30, bottom: 30, left: 40, right: 40 },
   tooltip: {
     trigger: "axis",
     axisPointer: { type: "line" },
@@ -30,14 +30,16 @@ const chartOptions = ref<EChartsOption>({
   },
   yAxis: {
     type: "value",
-    name: "kJ/kWh",
+    name: "%",
+    min:0,
+    max:40,
     axisLine: { lineStyle: { color: "#999" } },
     splitLine: { lineStyle: { color: "rgba(255,255,255,0.2)" } },
     axisLabel: { color: "#ccc" },
   },
   series: [
     {
-      name: "1#机实时汽耗",
+      name: "1#机实时发电效率",
       type: "line",
       smooth: true,
       symbol: "none",
@@ -48,9 +50,9 @@ const chartOptions = ref<EChartsOption>({
       data: [4, 4.5, 5.2, 4.3, 4.1, 3.9, 4.0],
     },
     {
-      name: "1#机汽耗标杆",
+      name: "投用前平均发电效率",
       type: "line",
-      data: new Array(7).fill(4), // 水平参考线
+      data: new Array(7).fill(28), // 水平参考线
       lineStyle: {
         color: "#5cb85c",
         width: 3,
@@ -60,7 +62,7 @@ const chartOptions = ref<EChartsOption>({
     },
   ],
   legend: {
-    data: ["1#机实时汽耗", "1#机汽耗标杆"],
+    data: ["1#机实时发电效率", "投用前平均发电效率"],
     top: 0,
     textStyle: { color: "#ccc" },
   },
@@ -68,15 +70,19 @@ const chartOptions = ref<EChartsOption>({
 </script>
 <template>
   <div class="w-full h-full">
-    <ChartHeader title="汽耗趋势" />
-    <div class="chart-box pt-[10px]">
+    <ChartHeader title="机组发电效率趋势" />
+    <div class="pt-[10px] frame-bg">
       <Echart :options="chartOptions" theme="dark" ref="chartRef" />
     </div>
   </div>
 </template>
 <style scoped>
-.chart-box {
-  width: 100%;
-  height: 80%;
+.frame-bg {
+  width: 98%;
+  height: calc(100% - 40px);
+  background-image: url("@/assets/picture/frame.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
 }
 </style>

@@ -2,7 +2,7 @@
   <div class="w-[25%] h-[60%] relative">
     <Echart :options="liquidOptions" />
     <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
-      <div class="text-white text-[14px] font-semibold">{{ title }}</div>
+      <div class="text-white text-[14px] font-semibold">{{ props.title }}</div>
     </div>
   </div>
 </template>

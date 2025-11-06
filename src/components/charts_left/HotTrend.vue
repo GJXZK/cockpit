@@ -6,7 +6,7 @@ import { ref } from "vue";
 
 const chartOptions = ref<EChartsOption>({
   backgroundColor: "transparent",
-  grid: { top: 30, bottom: 20, left: 20, right: 40 },
+  grid: { top: 30, bottom: 30, left: 20, right: 40 },
   tooltip: {
     trigger: "axis",
     axisPointer: { type: "line" },
@@ -72,7 +72,7 @@ const chartOptions = ref<EChartsOption>({
 <template>
   <div class="w-full h-full">
     <ChartHeader title="热耗趋势" />
-    <div class="chart-box pt-[10px]">
+    <div class="chart-box pt-[10px] frame-bg">
       <Echart :options="chartOptions" theme="dark" ref="chartRef" />
     </div>
   </div>
@@ -81,5 +81,13 @@ const chartOptions = ref<EChartsOption>({
 .chart-box {
   width: 100%;
   height: 80%;
+}
+.frame-bg {
+  width: 100%;
+  height: calc(100% - 40px);
+  background-image: url("@/assets/picture/frame.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
 }
 </style>

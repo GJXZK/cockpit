@@ -7,7 +7,7 @@
     <img :src="imgSrc" alt="header background" class="absolute object-cover" />
     <!-- 标题文字 -->
     <h1 class="absolute z-10 text-white! text-[18px] font-bold pl-10 select-none">
-      {{ title }}
+      {{ props.title }}
     </h1>
   </div>
 </template>

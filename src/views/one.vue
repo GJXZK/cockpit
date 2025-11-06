@@ -8,8 +8,8 @@ import mechineTwo from '../components/charts_center/mechine_2.vue';
 import mechineThree from '../components/charts_center/mechine_3.vue';
 import mechineFour from '../components/charts_center/mechine_4.vue';
 import HotTrend from '../components/charts_left/HotTrend.vue';
-import AirTrend from '../components/charts_center/AirTrend.vue';
-import ELecTrend from '../components/charts_right/ElecTrend.vue';
+import AirTrend from '../components/charts_right/AirTrend.vue';
+import ELecTrend from '../components/charts_center/ElecTrend.vue';
 import LiquidFill from '../components/common/LiquidFill.vue';
 import SystemUseRate from '../components/charts_center/SystemUseRate.vue'
 import UnitStatus from '../components/charts_right/UnitStatus.vue';
@@ -152,22 +152,22 @@ const router = useRouter()
                       class="w-full mx-auto mt-auto"
                     />
                     <!-- 蒸汽信息 -->
-                    <div class="absolute top-[-14%] left-[5%]">
+                    <div class="absolute w-[50%] top-[-14%] left-[10%]">
                       <div class="text-white text-[20px]">蒸汽流量:</div>
-                      <div class="text-white text-[20px] mt-[30%]">
+                      <div class="text-white text-[20px] mt-[8%] ml-[35%]">
                         蒸汽温度:
                       </div>
-                      <div class="text-white text-[20px] mt-[8%]">
+                      <div class="text-white text-[20px] mt-[2%] ml-[35%]">
                         蒸汽压力:
                       </div>
                     </div>
 
-                    <div class="absolute top-[-14%] right-[12%]">
+                    <div class="absolute w-[50%] top-[-14%] right-0">
                       <!-- 蒸汽信息 -->
                       <div class="">
-                        <div class="text-white text-[20px]">蒸汽流量:</div>
-                        <div class="text-white text-[20px] mt-[30%]">真空:</div>
-                        <div class="text-white text-[20px] mt-[8%]">
+                        <div class="text-white text-[20px] ml-[45%]">蒸汽流量:</div>
+                        <div class="text-white text-[20px] mt-[8%] ml-[5%]">真空:</div>
+                        <div class="text-white text-[20px] mt-[2%] ml-[5%]">
                           汽室温度:
                         </div>
                       </div>
@@ -198,7 +198,7 @@ const router = useRouter()
 
         <!-- right 25% -->
         <div class="w-[25%] h-full">
-          <div class="w-full h-[66%] pb-[10px]">
+          <div class="w-full h-[66%] ">
             <div class="w-full h-full rounded">
               <div class="h-[50%]">
                 <UnitStatus></UnitStatus>

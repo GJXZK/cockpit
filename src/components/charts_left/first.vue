@@ -88,6 +88,7 @@ const chartOptions = ref<echarts.EChartsOption>({
   yAxis: {
     type: "value",
     name: "蒸汽分配策略 t/h",
+    nameLocation: "middle",
     min: 25,
     max: 65,
     interval: 10,
@@ -102,7 +103,7 @@ const chartOptions = ref<echarts.EChartsOption>({
     right: "5%",
     icon: "circle",
   },
-  grid: { top: 30, bottom: 20, left: 20, right: 20 },
+  grid: { top: 30, bottom: 10, left: 20, right: 20 },
 
   series: [
     {
@@ -168,21 +169,31 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="w-full h-full">
+  <div class="w-full h-full ">
     <ChartHeader title="流量分配建议" />
-    <div class="mt-[5px] w-[80%] flex justify-between">
-      <p class="text-white text-[14px]">目标功率:xxxxx</p>
-      <p class="text-white text-[14px]">目标流量:xxxxx</p>
-      <p class="text-white text-[14px]">流量建议:xxxxx</p>
-    </div>
-    <div class="chart-box pt-[10px]">
-      <Echart :options="chartOptions" theme="dark" ref="chartRef" />
+    <div class="frame-bg">
+      <div class="mx-5 pt-2 flex justify-between">
+        <p class="text-white text-[14px]">目标功率:xxxxx</p>
+        <p class="text-white text-[14px]">目标流量:xxxxx</p>
+        <p class="text-white text-[14px]">流量建议:xxxxx</p>
+      </div>
+      <div class="chart-box pt-[10px]">
+        <Echart :options="chartOptions" theme="dark" ref="chartRef" />
+      </div>
     </div>
   </div>
 </template>
 <style scoped>
 .chart-box {
   width: 100%;
-  height: calc(90% - 30px);
+  height: calc(100% - 40px);
+}
+.frame-bg {
+  width: 100%;
+  height: calc(100% - 35px);
+  background-image: url("@/assets/picture/frame.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
 }
 </style>

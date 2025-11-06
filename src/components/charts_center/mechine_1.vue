@@ -80,7 +80,7 @@ onMounted(() => {
           data: [
             {
               value: v,
-              name: "汽机震动  t/h", 
+              name: "汽机振动 µm", 
               title: {
                 show: true,
                 offsetCenter: ["-30%", "30%"],
