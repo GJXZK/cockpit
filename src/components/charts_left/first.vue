@@ -28,17 +28,18 @@ const flowAdvice = async () => {
       total_steam_flow,
     } = flowAdviceData.value;
 
-    // 处理 unit1 数据，null 替换为 0
-    seriesData_1.value = total_flow_series.map((total, index) => [
-      total,
-      unit1_flow_series[index] === null ? 0 : unit1_flow_series[index],
-    ]);
+    // 处理 unit1 数据，null 替换为 0 - 添加类型断言
+    seriesData_1.value = total_flow_series
+      .map((total, index) => [
+        total,
+        unit1_flow_series[index] === null ? 0 : unit1_flow_series[index],
+      ]) as [number, number][];  // 添加类型断言
 
-    // 处理 unit2 数据，null 替换为 0
+    // 处理 unit2 数据，null 替换为 0 - 添加类型断言
     seriesData_2.value = total_flow_series.map((total, index) => [
       total,
       unit2_flow_series[index] === null ? 0 : unit2_flow_series[index],
-    ]);
+    ]) as [number, number][];  // 添加类型断言
 
     // 设置竖线位置为后端返回的 total_steam_flow
     currentTotal.value = total_steam_flow;
@@ -71,16 +72,12 @@ const chartOptions = ref<echarts.EChartsOption>({
       axisLabel: {
         color: "#ccc",
         // 只在10的倍数位置显示标签
-        interval: (index: number, value: number) => {
+        interval: (_index: number, value: number) => {
           return value % 10 === 0;
         },
       },
       axisTick: {
         show: true,
-        // 只在10的倍数位置显示长刻度
-        interval: (index: number, value: number) => {
-          return value % 10 === 0;
-        },
         length: 6, // 长刻度长度
         lineStyle: {
           color: "rgba(255,255,255,0.8)",
@@ -98,14 +95,12 @@ const chartOptions = ref<echarts.EChartsOption>({
       axisLabel: { show: false },
       axisTick: {
         show: true,
-        interval: 1, // 每个位置都显示
         length: 3, // 短刻度长度
         lineStyle: {
           color: "rgba(255,255,255,0.3)",
         },
       },
       splitLine: { show: false },
-      data:[]
     },
   ],
 

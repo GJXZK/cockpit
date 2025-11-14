@@ -100,10 +100,6 @@ const chartOptions = ref<EChartsOption>({
     top: 0,
     textStyle: { color: "#ccc" },
     formatter: function (name: string) {
-      const colors = {
-        "1#机实时汽耗": "#4ecdc4",
-        "1#机汽耗标杆": "#ff6b6b",
-      };
       return `${name}`;
     },
   },

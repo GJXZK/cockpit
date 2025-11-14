@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import Echart from "@/components/common/Echart.vue";
 
 // 定义 props 接收外部传入的标题

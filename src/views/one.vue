@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import { ref, onMounted, onUnmounted } from "vue";
 import First from "@/components/charts_left/first.vue";
 import Second from "../components/charts_left/second.vue";
