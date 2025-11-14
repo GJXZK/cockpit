@@ -1,4 +1,3 @@
-// src/services/turbineService.ts
 import { get } from './request';
 
 // 接口参数类型定义
@@ -23,6 +22,7 @@ export interface FlowAdviceData {
   target_power: number;
   target_flow: number;
   suggestion: string;
+  total_flow_series:number[];
   total_steam_flow: number;
   unit1_flow_series: number[];
   unit2_flow_series: number[];
@@ -61,14 +61,8 @@ export interface SystemAvailabilityData {
   optimization_control: number;
 }
 
-export interface OptimizationParam {
-  name: string;
-  realtime: number;
-  benchmark: number;
-}
-
 export interface AutoParameterOptimizationData {
-  optimization_params: OptimizationParam[];
+  optimization_params: Array<[string, number, number]>;
 }
 
 /**
@@ -97,7 +91,7 @@ export const turbineService = {
   },
 
   /**
-   * 获取热效率趋势数据
+   * 获取机组发电效率趋势数据
    */
   getThermalEfficiencyTrend: (params?: TurbineParams): Promise<ThermalEfficiencyTrendData> => {
     return get('/api/turbine/thermal_efficiency_trend', params);

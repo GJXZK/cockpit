@@ -1,66 +1,81 @@
-<script setup lang="js">
-import { useRouter } from 'vue-router';
-import { ref, onMounted, onUnmounted } from 'vue'
-import First from '@/components/charts_left/first.vue'
-import Second from '../components/charts_left/second.vue';
-import mechineOne from '../components/charts_center/mechine_1.vue';
-import mechineTwo from '../components/charts_center/mechine_2.vue';
-import mechineThree from '../components/charts_center/mechine_3.vue';
-import mechineFour from '../components/charts_center/mechine_4.vue';
-import HotTrend from '../components/charts_left/HotTrend.vue';
-import AirTrend from '../components/charts_right/AirTrend.vue';
-import ELecTrend from '../components/charts_center/ElecTrend.vue';
-import LiquidFill from '../components/common/LiquidFill.vue';
-import SystemUseRate from '../components/charts_center/SystemUseRate.vue'
-import UnitStatus from '../components/charts_right/UnitStatus.vue';
-import ColdEndStatus from '../components/charts_right/ColdEndStatus.vue';
-const currentTime = ref('')
-let timer = null
-const bgUrl = new URL('@/assets/picture/backgroundImg.png', import.meta.url).href
-// 尺寸状态
-const width = ref(window.innerWidth)
-const height = ref(window.innerHeight)
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted } from "vue";
+import First from "@/components/charts_left/first.vue";
+import Second from "../components/charts_left/second.vue";
+import mechineOne from "../components/charts_center/mechine_1.vue";
+import mechineTwo from "../components/charts_center/mechine_2.vue";
+import mechineThree from "../components/charts_center/mechine_3.vue";
+import mechineFour from "../components/charts_center/mechine_4.vue";
+import HotTrend from "../components/charts_left/HotTrend.vue";
+import AirTrend from "../components/charts_right/AirTrend.vue";
+import ELecTrend from "../components/charts_center/ElecTrend.vue";
+import SystemUseRate from "../components/charts_center/SystemUseRate.vue";
+import UnitStatus from "../components/charts_right/UnitStatus.vue";
+import ColdEndStatus from "../components/charts_right/ColdEndStatus.vue";
+import toFixedTwo from "@/util/utils.ts";
+import turbineService, {
+  type TurbineOverviewData,
+} from "../api/turbuneService";
 
-const MAX_RATIO = 1920 / 1080
+const currentTime = ref("");
+let timer: number | null = null;
+const bgUrl = new URL("@/assets/picture/backgroundImg.png", import.meta.url)
+  .href;
 
-function resize() {
-  const w = window.innerWidth
-  const h = window.innerHeight
-  const ratio = w / h
-
-  // 限制最大比例不超过 16:9
-  if (ratio > MAX_RATIO) {
-    // 太宽 → 调整宽度
-    height.value = h
-    width.value = h * MAX_RATIO
-  } else {
-    // 太高 → 调整高度
-    width.value = w
-    height.value = w / MAX_RATIO
-  }
-}
 const updateTime = () => {
-  const now = new Date()
-  currentTime.value = now.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  })
+  const now = new Date();
+  currentTime.value = now.toLocaleString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+};
+const handleRefresh = (): void => {
+  location.reload();
+};
+
+const toggleFullscreen = (): void => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch((err) => {
+      console.error(`全屏请求错误: ${err.message}`);
+    });
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+    handleRefresh()
+  }
+};
+
+const handleClose = ()=>{
+
 }
+
+const overviewData = ref<TurbineOverviewData | null>(null);
+
+const getOverview = async () => {
+  try {
+    overviewData.value = await turbineService.getOverview();
+  } catch (error) {
+    console.error("获取概览数据失败:", error);
+  }
+};
 
 onMounted(() => {
-  updateTime()
-  timer = setInterval(updateTime, 1000)
-})
+  getOverview();
+  updateTime();
+  timer = setInterval(updateTime, 1000);
+});
 
 onUnmounted(() => {
-  clearInterval(timer)
-})
-const router = useRouter()
+  if (timer) clearInterval(timer);
+});
+// const router = useRouter()
 </script>
 <template>
   <div
@@ -95,9 +110,73 @@ const router = useRouter()
       </div>
       <!-- 右上角时间 -->
       <div
-        class="absolute top-3 right-4 text-white text-[18px] font-mono tracking-wider"
+        class="absolute top-3 right-4 text-white text-[18px] font-mono tracking-wider flex items-center gap-3"
       >
         {{ currentTime }}
+        <div
+          class="text-white hover:text-blue-200 transition-colors cursor-pointer"
+          @click="handleRefresh"
+          title="刷新"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+            <path d="M21 3v5h-5" />
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+            <path d="M8 16H3v5" />
+          </svg>
+        </div>
+        <!-- 全屏图标 -->
+        <div
+          class="text-white hover:text-blue-200 transition-colors cursor-pointer"
+          @click="toggleFullscreen"
+          title="全屏"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+          </svg>
+        </div>
+        <div
+        @click="handleClose()"
+        class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-red-500/80 transition"
+        title="关闭"
+      >
+        <svg
+          class="w-5 h-5 text-white"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </div>
       </div>
     </div>
     <!-- body -->
@@ -142,7 +221,11 @@ const router = useRouter()
                         alt=""
                         class="w-[60px]"
                       />
-                      <div class="text-white text-[20px]">发电功率:</div>
+                      <div class="text-white text-[20px]">
+                        发电功率:{{
+                          toFixedTwo(overviewData?.generation_power)
+                        }}
+                      </div>
                     </div>
                   </div>
                   <!-- 轮机 -->
@@ -153,22 +236,28 @@ const router = useRouter()
                     />
                     <!-- 蒸汽信息 -->
                     <div class="absolute w-[50%] top-[-14%] left-[10%]">
-                      <div class="text-white text-[20px]">蒸汽流量:</div>
-                      <div class="text-white text-[20px] mt-[8%] ml-[35%]">
-                        蒸汽温度:
+                      <div class="text-white text-[18px]">
+                        蒸汽流量:{{ overviewData?.inlet_steam_flow }}
                       </div>
-                      <div class="text-white text-[20px] mt-[2%] ml-[35%]">
-                        蒸汽压力:
+                      <div class="text-white text-[18px] mt-[10%] ml-[35%]">
+                        蒸汽温度:{{ overviewData?.inlet_steam_temperature }}
+                      </div>
+                      <div class="text-white text-[18px] mt-[2%] ml-[35%]">
+                        蒸汽压力:{{ overviewData?.inlet_steam_pressure }}
                       </div>
                     </div>
 
                     <div class="absolute w-[50%] top-[-14%] right-0">
                       <!-- 蒸汽信息 -->
                       <div class="">
-                        <div class="text-white text-[20px] ml-[45%]">蒸汽流量:</div>
-                        <div class="text-white text-[20px] mt-[8%] ml-[5%]">真空:</div>
-                        <div class="text-white text-[20px] mt-[2%] ml-[5%]">
-                          汽室温度:
+                        <div class="text-white text-[18px] ml-[45%]">
+                          蒸汽流量:{{ overviewData?.outlet_steam_flow }}
+                        </div>
+                        <div class="text-white text-[18px] mt-[10%] ml-[5%]">
+                          真空:{{ overviewData?.outlet_vacuum }}
+                        </div>
+                        <div class="text-white text-[18px] mt-[2%] ml-[5%]">
+                          汽室温度:{{ overviewData?.outlet_casing_temperature }}
                         </div>
                       </div>
                     </div>
@@ -177,10 +266,32 @@ const router = useRouter()
               </div>
               <!-- 下半部分 四个仪表盘 -->
               <div class="w-full h-[40%] flex">
-                <mechineOne></mechineOne>
-                <mechineTwo></mechineTwo>
-                <mechineThree></mechineThree>
-                <mechineFour></mechineFour>
+                <mechineOne
+                  :value="
+                    overviewData?.turbine_vibration
+                      ? overviewData.turbine_vibration
+                      : 0
+                  "
+                ></mechineOne>
+                <mechineTwo
+                  :value="
+                    overviewData?.inlet_steam_flow
+                      ? overviewData.inlet_steam_flow
+                      : 0
+                  "
+                ></mechineTwo>
+                <mechineThree
+                  :value="
+                    overviewData?.outlet_vacuum ? overviewData.outlet_vacuum : 0
+                  "
+                ></mechineThree>
+                <mechineFour
+                  :value="
+                    overviewData?.power_generation_efficiency_improvement
+                      ? overviewData.power_generation_efficiency_improvement
+                      : 0
+                  "
+                ></mechineFour>
               </div>
             </div>
           </div>
@@ -198,7 +309,7 @@ const router = useRouter()
 
         <!-- right 25% -->
         <div class="w-[25%] h-full">
-          <div class="w-full h-[66%] ">
+          <div class="w-full h-[66%]">
             <div class="w-full h-full rounded">
               <div class="h-[50%]">
                 <UnitStatus></UnitStatus>

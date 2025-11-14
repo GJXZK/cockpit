@@ -2,6 +2,7 @@
 import axios from 'axios';
 
 const request = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -11,7 +12,6 @@ const request = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   (config) => {
-    console.log(`请求: ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {

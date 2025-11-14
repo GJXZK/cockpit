@@ -1,73 +1,95 @@
 <script setup lang="ts">
 import Echart from "@/components/common/Echart.vue";
 import ChartHeader from "@/components/common/ChartHeader.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import turbineService, {
+  type ColdEndDiagnosisData,
+} from "../../api/turbuneService";
 
+let coldEndOptimization = ref<ColdEndDiagnosisData>();
+const timeLabels = ref<string[]>([]);
+
+const getColdEndDiagnosis = async () => {
+  coldEndOptimization.value = await turbineService.getColdEndDiagnosis();
+};
 const chartRef = ref<HTMLDivElement | null>(null);
 
-// 环境数据
-const envData = ref({
-  temperature: "26°C",
-  pressure: "99kPa",
-  humidity: "40%",
-  windSpeed: "1.2m/s",
-});
+// 处理图表数据函数
+const processChartData = () => {
+  if (!coldEndOptimization.value?.actual_values) return { timeLabels: [], pressureData: [] };
 
-// 生成过去1小时到现在的数据
-const generateData = () => {
+  const actualValues = coldEndOptimization.value.actual_values;
   const now = new Date();
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
-  const data = [];
-  let currentTime = oneHourAgo;
-
-  while (currentTime <= now) {
-    // 生成随机压力数据，范围在 0-40kPa 之间
-    const pressure = Math.random() * 40;
-    data.push({
-      time: currentTime.getTime(),
-      pressure: pressure,
-    });
-    // 每分钟一个数据点
-    currentTime = new Date(currentTime.getTime() + 60 * 1000);
+  // 生成时间轴和数据
+  const labels = [];
+  const pressureData = [];
+  for (let i = actualValues.length - 1; i >= 0; i--) {
+    const value = actualValues[i];
+    if (value !== null && value !== undefined) {
+      const time = new Date(now.getTime() - i * 60000); // 每分钟间隔
+      labels.push(
+        time.toLocaleTimeString("zh-CN", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      );
+      pressureData.push(value);
+    }
   }
 
-  return data;
+  timeLabels.value = labels;
+  return { timeLabels: labels, pressureData };
 };
 
-const chartData = generateData();
-
-const chartOptions: echarts.EChartsOption = {
+const chartOptions = ref({
   backgroundColor: "transparent",
   grid: { top: 20, right: 0, bottom: 20, left: 20 },
-  xAxis: {
-    type: "time",
-    name: "时间/min",
-    nameLocation: "middle",
-    nameGap: 30,
-    axisLine: { lineStyle: { color: "#ccc" } },
-    axisLabel: {
-      color: "#ccc",
-      formatter: (value: number) => {
-        const date = new Date(value);
-        return `${date.getHours()}:${date
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")}`;
+  xAxis: [
+    {
+      // 长刻度轴（显示标签的位置）
+      type: "category",
+      name: "时间/min",
+      nameLocation: "middle",
+      nameGap: 30,
+      axisLine: { lineStyle: { color: "#ccc" } },
+      axisLabel: {
+        color: "#ccc",
+        interval: 19,
+        showMaxLabel: true,
       },
+      axisTick: {
+        show: true,
+        alignWithLabel: true,
+        interval: 19, // 每20个数据显示一个长刻度
+        length: 5, // 长刻度
+      },
+      data: [],
     },
-    min: new Date().getTime() - 60 * 60 * 1000, // 1小时前
-    max: new Date().getTime(), // 现在
-    // 控制刻度显示间隔
-    interval: 20 * 60 * 1000, // 10分钟一个刻度
-  },
+    {
+      // 短刻度轴（所有位置）
+      type: "category",
+      position: "bottom",
+      axisLine: { show: false },
+      axisLabel: { show: false },
+      axisTick: {
+        show: true,
+        alignWithLabel: true,
+        interval: 0, // 每个数据点都显示短刻度
+        length: 2, // 短刻度
+      },
+      data: [],
+    }
+  ],
   yAxis: {
     type: "value",
     name: "蒸汽冷凝压力/kPa",
     nameLocation: "middle",
     nameGap: 40,
     min: 0,
-    max: 40,
+    max: 80,
     axisLine: { lineStyle: { color: "#ccc" } },
     axisLabel: { color: "#ccc" },
     splitLine: {
@@ -81,10 +103,9 @@ const chartOptions: echarts.EChartsOption = {
       smooth: true,
       symbol: "none",
       lineStyle: { width: 2, color: "#5470c6" },
-      data: chartData.map((item) => [item.time, item.pressure]),
+      data: [],
     },
     {
-      // 25kPa 虚线
       type: "line",
       markLine: {
         silent: true,
@@ -93,13 +114,13 @@ const chartOptions: echarts.EChartsOption = {
           color: "#ff4d4f",
           width: 1,
         },
-        symbol: "none", // 去掉箭头
+        symbol: "none",
         data: [
           {
             yAxis: 25,
             label: {
               show: true,
-              formatter: "25kPa",
+              formatter: "25",
               color: "#ff4d4f",
             },
           },
@@ -111,16 +132,32 @@ const chartOptions: echarts.EChartsOption = {
     trigger: "axis",
     formatter: (params: any) => {
       const data = params[0];
-      const date = new Date(data.value[0]);
-      const time = `${date.getHours()}:${date
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}`;
-      const pressure = data.value[1].toFixed(2);
+      const time = data.name;
+      const pressure = data.value.toFixed(2);
       return `时间:${time}<br/>压力: ${pressure} kPa`;
     },
   },
-};
+});
+
+// 数据加载后更新图表
+onMounted(async () => {
+  await getColdEndDiagnosis();
+  
+  if (coldEndOptimization.value?.actual_values) {
+    const { pressureData } = processChartData();
+    const xAxis = chartOptions.value.xAxis as any[];
+    const series = chartOptions.value.series as any[];
+    
+    if (xAxis && Array.isArray(xAxis)) {
+      if (xAxis[0]) xAxis[0].data = timeLabels.value;
+      if (xAxis[1]) xAxis[1].data = timeLabels.value;
+    }
+    
+    if (series[0]) {
+      series[0].data = pressureData;
+    }
+  }
+});
 </script>
 
 <template>
@@ -132,25 +169,25 @@ const chartOptions: echarts.EChartsOption = {
         <div class="flex items-center space-x-2">
           <span class="text-blue-400">🌡️</span>
           <span class="text-white text-[14px]"
-            >环境温度：{{ envData.temperature }}</span
+            >环境温度：{{ coldEndOptimization?.ambient_temperature }}</span
           >
         </div>
         <div class="flex items-center space-x-2">
           <span class="text-green-400">📊</span>
           <span class="text-white text-[14px]"
-            >气压：{{ envData.pressure }}</span
+            >气压：{{ coldEndOptimization?.air_pressure }}</span
           >
         </div>
         <div class="flex items-center space-x-2">
           <span class="text-cyan-400">💧</span>
           <span class="text-white text-[14px]"
-            >湿度：{{ envData.humidity }}</span
+            >湿度：{{ coldEndOptimization?.humidity }}</span
           >
         </div>
         <div class="flex items-center space-x-2">
           <span class="text-yellow-400">💨</span>
           <span class="text-white text-[14px]"
-            >风速：{{ envData.windSpeed }}</span
+            >风速：{{ coldEndOptimization?.wind_speed }}</span
           >
         </div>
       </div>

@@ -2,55 +2,60 @@
 import Echart from "@/components/common/Echart.vue";
 import type { EChartsOption } from "echarts";
 import ChartHeader from "@/components/common/ChartHeader.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import turbineService, {
+  type UnitDiagnosisData,
+} from "../..//api/turbuneService";
 
-// 生成过去1小时到现在的数据
-const generateData = () => {
-  const now = new Date();
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+const unitDiagnosisData = ref<UnitDiagnosisData>();
+const timeLabels = ref<string[]>([]);
 
-  const data = [];
-  let currentTime = oneHourAgo;
-
-  while (currentTime <= now) {
-    // 生成HDI数据，模拟波动
-    const hdi = 0.2 + Math.random() * 0.6;
-    data.push({
-      time: currentTime.getTime(),
-      hdi: hdi,
-    });
-    // 每分钟一个数据点
-    currentTime = new Date(currentTime.getTime() + 60 * 1000);
-  }
-
-  return data;
+const getUnitDiagnosis = async () => {
+  unitDiagnosisData.value = await turbineService.getUnitDiagnosis();
 };
-
-const chartData = generateData();
 
 const chartOptions = ref<EChartsOption>({
   backgroundColor: "transparent",
   grid: { top: 20, right: 40, bottom: 20, left: 20 },
-  xAxis: {
-    type: "time",
-    name: "时间/min",
-    nameLocation: "middle",
-    nameGap: 30,
-    axisLine: { lineStyle: { color: "#ccc" } },
-    axisLabel: {
-      color: "#ccc",
-      formatter: (value: number) => {
-        const date = new Date(value);
-        return `${date.getHours()}:${date
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")}`;
+  xAxis: [
+    {
+      // 长刻度轴（显示标签的位置）
+      type: "category",
+      position: "bottom",
+      name: "时间/min",
+      nameLocation: "middle",
+      nameGap: 30,
+      axisLine: { lineStyle: { color: "#ccc" } },
+      axisTick: {
+        show: true,
+        alignWithLabel: true,
+        interval: 19,
+        length: 5,
+        lineStyle: { color: "#ccc" }
       },
+      axisLabel: {
+        color: "#ccc",
+        interval: 19,
+        showMaxLabel: true,
+      },
+      data: [],
     },
-    min: new Date().getTime() - 60 * 60 * 1000,
-    max: new Date().getTime(),
-    interval: 10 * 60 * 1000, // 10分钟一个刻度
-  },
+    {
+      // 短刻度轴（所有位置）
+      type: "category", 
+      position: "bottom",
+      axisLine: { show: false },
+      axisTick: {
+        show: true,
+        alignWithLabel: true,
+        interval: 0,
+        length: 3,
+        lineStyle: { color: "#ccc" }
+      },
+      axisLabel: { show: false },
+      data: [],
+    }
+  ],
   yAxis: {
     type: "value",
     name: "健康退化指数HDI",
@@ -58,6 +63,7 @@ const chartOptions = ref<EChartsOption>({
     nameGap: 40,
     min: 0,
     max: 1,
+    interval: 0.1,
     axisLine: { lineStyle: { color: "#ccc" } },
     splitLine: { lineStyle: { color: "rgba(255,255,255,0.2)" } },
     axisLabel: { color: "#ccc" },
@@ -68,10 +74,9 @@ const chartOptions = ref<EChartsOption>({
       smooth: true,
       symbol: "none",
       lineStyle: { width: 2, color: "#5470c6" },
-      data: chartData.map((item) => [item.time, item.hdi]),
+      data: [],
     },
     {
-      // 0.3阈值线
       type: "line",
       markLine: {
         silent: true,
@@ -86,7 +91,6 @@ const chartOptions = ref<EChartsOption>({
       },
     },
     {
-      // 0.6阈值线
       type: "line",
       markLine: {
         silent: true,
@@ -105,15 +109,58 @@ const chartOptions = ref<EChartsOption>({
     trigger: "axis",
     formatter: (params: any) => {
       const data = params[0];
-      const date = new Date(data.value[0]);
-      const time = `${date.getHours()}:${date
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}`;
-      const hdi = data.value[1].toFixed(3);
+      const time = data.name;
+      const hdi = data.value.toFixed(3);
       return `时间:${time}<br/>HDI: ${hdi}`;
     },
   },
+});
+
+// 处理数据函数
+const processChartData = () => {
+  let hdiData: number | any[] = [];
+  if (unitDiagnosisData.value) {
+    hdiData = unitDiagnosisData.value.health_degradation_index;
+  }
+
+  const now = new Date();
+  const validData = [];
+  const labels = [];
+
+  for (let i = hdiData.length - 1; i >= 0; i--) {
+    const hdi = hdiData[i];
+    if (hdi !== null && hdi !== undefined) {
+      const time = new Date(now.getTime() - i * 60000);
+      labels.push(
+        time.toLocaleTimeString("zh-CN", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      );
+      validData.push(hdi);
+    }
+  }
+
+  timeLabels.value = labels;
+
+  // 更新两个x轴的数据
+  const xAxis = chartOptions.value.xAxis as any[];
+  if (xAxis && Array.isArray(xAxis)) {
+    if (xAxis[0]) xAxis[0].data = timeLabels.value;
+    if (xAxis[1]) xAxis[1].data = timeLabels.value;
+  }
+
+  if (chartOptions.value.series && Array.isArray(chartOptions.value.series)) {
+    const series0 = chartOptions.value.series[0] as any;
+    if (series0) series0.data = validData;
+  }
+};
+
+onMounted(async () => {
+  await getUnitDiagnosis();
+  processChartData();
 });
 </script>
 

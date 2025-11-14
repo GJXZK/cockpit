@@ -1,8 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import * as echarts from "echarts";
 import Echart from "@/components/common/Echart.vue";
 
+// 定义组件接口
+interface Props {
+  value: number; // 动态输入的值
+}
+
+// 定义组件属性
+const props = defineProps<Props>();
+
+// 响应式数据
 const chartOptions = ref<echarts.EChartsOption>({
   backgroundColor: "transparent",
   series: [
@@ -58,7 +67,7 @@ const chartOptions = ref<echarts.EChartsOption>({
       },
       data: [
         {
-          value: -45, // 实时值
+          value: props.value, // 使用外部传入的值
           name: `真空 -kPa`,
           title: {
             show: true,
@@ -73,19 +82,17 @@ const chartOptions = ref<echarts.EChartsOption>({
 });
 
 const chartRef = ref();
-let timer: number | null = null;
-onMounted(() => {
-  const chart = chartRef.value?.getInstance?.();
-  if (!chart) return;
 
-  setInterval(() => {
-    const v = -100 + Math.floor(Math.random() * 50);
+// 监听 value 变化，更新图表
+watch(() => props.value, (newValue) => {
+  const chart = chartRef.value?.getInstance?.();
+  if (chart) {
     chart.setOption({
       series: [
         {
           data: [
             {
-              value: v,
+              value: newValue,
               name: "真空 kPa",
               title: {
                 show: true,
@@ -98,15 +105,41 @@ onMounted(() => {
         },
       ],
     });
-  }, 2000);
+  }
 });
+
+// 初始设置
+onMounted(() => {
+  const chart = chartRef.value?.getInstance?.();
+  if (chart) {
+    chart.setOption({
+      series: [
+        {
+          data: [
+            {
+              value: props.value,
+              name: "真空 kPa",
+              title: {
+                show: true,
+                offsetCenter: ["-30%", "30%"],
+                fontSize: 14,
+                color: "#ccc",
+              },
+            },
+          ],
+        },
+      ],
+    });
+  }
+});
+
 onUnmounted(() => {
-  timer && window.clearInterval(timer);
+  // 清理工作
 });
 </script>
 
 <template>
-  <div class="w-full  flex justify-center">
+  <div class="w-full flex justify-center">
     <div class="chart-box">
       <Echart :options="chartOptions" theme="dark" ref="chartRef" />
     </div>
