@@ -5,7 +5,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { ref, onMounted } from "vue";
 import turbineService, {
   type SteamRateTrendData,
-} from "../../api/turbineService";
+} from "@/api/turbineService.ts";
 
 const steamRateTrendData = ref<SteamRateTrendData>();
 const timeLabels = ref<string[]>([]);

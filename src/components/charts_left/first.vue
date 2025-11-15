@@ -5,7 +5,7 @@ import * as echarts from "echarts";
 import Echart from "@/components/common/Echart.vue";
 import ChartHeader from "@/components/common/ChartHeader.vue";
 import toFixedTwo from "@/util/utils.ts";
-import turbineService, { type FlowAdviceData } from "../../api/turbineService";
+import turbineService, { type FlowAdviceData } from "@/api/turbineService.ts";
 
 // 响应式数据
 let flowAdviceData = ref<FlowAdviceData>();

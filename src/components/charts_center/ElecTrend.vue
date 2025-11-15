@@ -5,7 +5,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { onMounted, ref } from "vue";
 import turbineService, {
   type ThermalEfficiencyTrendData,
-} from "../../api/turbineService";
+} from "@/api/turbineService.ts";
 
 const thermalEfficiencyTrendData = ref<ThermalEfficiencyTrendData>();
 const timeLabels = ref<string[]>([]);

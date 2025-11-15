@@ -3,7 +3,7 @@ import LiquidFill from "@/components/common/LiquidFill.vue";
 import ChartHeader from "@/components/common/ChartHeader.vue";
 import turbineService, {
   type SystemAvailabilityData,
-} from "../../api/turbineService";
+} from "@/api/turbineService.ts";
 import { onMounted, ref } from "vue";
 
 const systemAvailabilityData = ref<SystemAvailabilityData>();

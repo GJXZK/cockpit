@@ -15,7 +15,7 @@ import ColdEndStatus from "../components/charts_right/ColdEndStatus.vue";
 import toFixedTwo from "@/util/utils.ts";
 import turbineService, {
   type TurbineOverviewData,
-} from "../api/turbineService";
+} from "@/api/turbineService.ts";
 
 const currentTime = ref("");
 let timer: number | null = null;

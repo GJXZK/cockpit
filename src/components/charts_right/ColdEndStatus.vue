@@ -4,7 +4,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { onMounted, ref } from "vue";
 import turbineService, {
   type ColdEndDiagnosisData,
-} from "../../api/turbineService";
+} from "@/api/turbineService.ts";
 
 let coldEndOptimization = ref<ColdEndDiagnosisData>();
 const timeLabels = ref<string[]>([]);

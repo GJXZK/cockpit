@@ -5,7 +5,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { ref, onMounted } from "vue";
 import turbineService, {
   type UnitDiagnosisData,
-} from "../../api/turbineService";
+} from "@/api/turbineService.ts";
 
 const unitDiagnosisData = ref<UnitDiagnosisData>();
 const timeLabels = ref<string[]>([]);
