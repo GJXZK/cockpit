@@ -5,7 +5,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { ref, onMounted } from "vue";
 import turbineService, {
   type UnitDiagnosisData,
-} from "../..//api/turbuneService";
+} from "../../api/turbineService";
 
 const unitDiagnosisData = ref<UnitDiagnosisData>();
 const timeLabels = ref<string[]>([]);
@@ -31,7 +31,7 @@ const chartOptions = ref<EChartsOption>({
         alignWithLabel: true,
         interval: 19,
         length: 5,
-        lineStyle: { color: "#ccc" }
+        lineStyle: { color: "#ccc" },
       },
       axisLabel: {
         color: "#ccc",
@@ -42,7 +42,7 @@ const chartOptions = ref<EChartsOption>({
     },
     {
       // 短刻度轴（所有位置）
-      type: "category", 
+      type: "category",
       position: "bottom",
       axisLine: { show: false },
       axisTick: {
@@ -50,11 +50,11 @@ const chartOptions = ref<EChartsOption>({
         alignWithLabel: true,
         interval: 0,
         length: 3,
-        lineStyle: { color: "#ccc" }
+        lineStyle: { color: "#ccc" },
       },
       axisLabel: { show: false },
       data: [],
-    }
+    },
   ],
   yAxis: {
     type: "value",

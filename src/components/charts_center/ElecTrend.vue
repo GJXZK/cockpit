@@ -5,7 +5,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { onMounted, ref } from "vue";
 import turbineService, {
   type ThermalEfficiencyTrendData,
-} from "../..//api/turbuneService";
+} from "../../api/turbineService";
 
 const thermalEfficiencyTrendData = ref<ThermalEfficiencyTrendData>();
 const timeLabels = ref<string[]>([]);
@@ -31,7 +31,7 @@ const chartOptions = ref<EChartsOption>({
       axisLine: {
         lineStyle: { color: "#999" },
       },
-      axisLabel: { 
+      axisLabel: {
         color: "#ccc",
         interval: 19,
         showMaxLabel: true,
@@ -58,7 +58,7 @@ const chartOptions = ref<EChartsOption>({
         length: 2, // 短刻度
       },
       data: [],
-    }
+    },
   ],
   yAxis: {
     type: "value",
@@ -78,9 +78,9 @@ const chartOptions = ref<EChartsOption>({
         width: 4,
       },
       data: [],
-      itemStyle:{
-        color:"#5cb85c"
-      }
+      itemStyle: {
+        color: "#5cb85c",
+      },
     },
     {
       name: "投用前平均发电效率",
@@ -92,9 +92,9 @@ const chartOptions = ref<EChartsOption>({
         type: "dashed",
       },
       symbol: "none",
-      itemStyle:{
-        color:"#ff0000"
-      }
+      itemStyle: {
+        color: "#ff0000",
+      },
     },
   ],
   legend: {
@@ -106,7 +106,7 @@ const chartOptions = ref<EChartsOption>({
 
 // 处理数据函数
 const processChartData = () => {
-  let efficiencies: number | any[] = [];
+  let efficiencies: number[] = [];
   if (thermalEfficiencyTrendData.value) {
     efficiencies = thermalEfficiencyTrendData.value.thermal_efficiencies;
   }

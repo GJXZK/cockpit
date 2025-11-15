@@ -5,7 +5,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { ref, onMounted } from "vue";
 import turbineService, {
   type SteamRateTrendData,
-} from "../..//api/turbuneService";
+} from "../../api/turbineService";
 
 const steamRateTrendData = ref<SteamRateTrendData>();
 const timeLabels = ref<string[]>([]);
@@ -76,7 +76,7 @@ const chartOptions = ref<EChartsOption>({
         width: 3,
       },
       itemStyle: {
-        color: "#5cb85c", 
+        color: "#5cb85c",
       },
       data: [],
     },
@@ -91,7 +91,7 @@ const chartOptions = ref<EChartsOption>({
       },
       symbol: "none",
       itemStyle: {
-        color: "#ff0000", 
+        color: "#ff0000",
       },
     },
   ],

@@ -15,7 +15,7 @@ import ColdEndStatus from "../components/charts_right/ColdEndStatus.vue";
 import toFixedTwo from "@/util/utils.ts";
 import turbineService, {
   type TurbineOverviewData,
-} from "../api/turbuneService";
+} from "../api/turbineService";
 
 const currentTime = ref("");
 let timer: number | null = null;
@@ -47,13 +47,11 @@ const toggleFullscreen = (): void => {
     if (document.exitFullscreen) {
       document.exitFullscreen();
     }
-    handleRefresh()
+    handleRefresh();
   }
 };
 
-const handleClose = ()=>{
-
-}
+const handleClose = () => {};
 
 const overviewData = ref<TurbineOverviewData | null>(null);
 
@@ -158,24 +156,24 @@ onUnmounted(() => {
           </svg>
         </div>
         <div
-        @click="handleClose()"
-        class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-red-500/80 transition"
-        title="关闭"
-      >
-        <svg
-          class="w-5 h-5 text-white"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
+          @click="handleClose()"
+          class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-red-500/80 transition"
+          title="关闭"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </div>
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </div>
       </div>
     </div>
     <!-- body -->

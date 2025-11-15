@@ -4,7 +4,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import { onMounted, ref } from "vue";
 import turbineService, {
   type ColdEndDiagnosisData,
-} from "../../api/turbuneService";
+} from "../../api/turbineService";
 
 let coldEndOptimization = ref<ColdEndDiagnosisData>();
 const timeLabels = ref<string[]>([]);
@@ -16,7 +16,8 @@ const chartRef = ref<HTMLDivElement | null>(null);
 
 // 处理图表数据函数
 const processChartData = () => {
-  if (!coldEndOptimization.value?.actual_values) return { timeLabels: [], pressureData: [] };
+  if (!coldEndOptimization.value?.actual_values)
+    return { timeLabels: [], pressureData: [] };
 
   const actualValues = coldEndOptimization.value.actual_values;
   const now = new Date();
@@ -81,7 +82,7 @@ const chartOptions = ref({
         length: 2, // 短刻度
       },
       data: [],
-    }
+    },
   ],
   yAxis: {
     type: "value",
@@ -142,17 +143,17 @@ const chartOptions = ref({
 // 数据加载后更新图表
 onMounted(async () => {
   await getColdEndDiagnosis();
-  
+
   if (coldEndOptimization.value?.actual_values) {
     const { pressureData } = processChartData();
     const xAxis = chartOptions.value.xAxis as any[];
     const series = chartOptions.value.series as any[];
-    
+
     if (xAxis && Array.isArray(xAxis)) {
       if (xAxis[0]) xAxis[0].data = timeLabels.value;
       if (xAxis[1]) xAxis[1].data = timeLabels.value;
     }
-    
+
     if (series[0]) {
       series[0].data = pressureData;
     }

@@ -5,7 +5,7 @@ import * as echarts from "echarts";
 import Echart from "@/components/common/Echart.vue";
 import ChartHeader from "@/components/common/ChartHeader.vue";
 import toFixedTwo from "@/util/utils.ts";
-import turbineService, { type FlowAdviceData } from "../..//api/turbuneService";
+import turbineService, { type FlowAdviceData } from "../../api/turbineService";
 
 // 响应式数据
 let flowAdviceData = ref<FlowAdviceData>();
@@ -29,17 +29,16 @@ const flowAdvice = async () => {
     } = flowAdviceData.value;
 
     // 处理 unit1 数据，null 替换为 0 - 添加类型断言
-    seriesData_1.value = total_flow_series
-      .map((total, index) => [
-        total,
-        unit1_flow_series[index] === null ? 0 : unit1_flow_series[index],
-      ]) as [number, number][];  // 添加类型断言
+    seriesData_1.value = total_flow_series.map((total, index) => [
+      total,
+      unit1_flow_series[index] === null ? 0 : unit1_flow_series[index],
+    ]) as [number, number][]; // 添加类型断言
 
     // 处理 unit2 数据，null 替换为 0 - 添加类型断言
     seriesData_2.value = total_flow_series.map((total, index) => [
       total,
       unit2_flow_series[index] === null ? 0 : unit2_flow_series[index],
-    ]) as [number, number][];  // 添加类型断言
+    ]) as [number, number][]; // 添加类型断言
 
     // 设置竖线位置为后端返回的 total_steam_flow
     currentTotal.value = total_steam_flow;

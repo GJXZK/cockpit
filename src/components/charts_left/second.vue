@@ -3,7 +3,7 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import SecondChild from "./second_child.vue";
 import turbineService, {
   type AutoParameterOptimizationData,
-} from "../..//api/turbuneService";
+} from "../../api/turbineService";
 import { onMounted, ref } from "vue";
 const autoParameterOptimizationData = ref<AutoParameterOptimizationData>();
 const getAutoParameterOptimization = async () => {
