@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import First from "@/components/charts_left/first.vue";
 import Second from "../components/charts_left/second.vue";
 import mechineOne from "../components/charts_center/mechine_1.vue";
@@ -16,6 +16,8 @@ import toFixedTwo from "@/util/utils.ts";
 import turbineService, {
   type TurbineOverviewData,
 } from "@/api/turbineService.ts";
+import { refreshSignal } from "@/util/eventBus";
+import router from "@/router";
 
 const currentTime = ref("");
 let timer: number | null = null;
@@ -51,7 +53,16 @@ const toggleFullscreen = (): void => {
   }
 };
 
-const handleClose = () => {};
+const handleClose = (): void => {
+  window.location.href = "http://172.16.111.111:30972";
+};
+// 切换界面逻辑
+const selectedMachine = ref("1"); // 这里也要设置为1
+const handleMachineChange = () => {
+  if (selectedMachine.value === "2") {
+    router.push("/two");
+  }
+};
 
 const overviewData = ref<TurbineOverviewData | null>(null);
 
@@ -62,6 +73,10 @@ const getOverview = async () => {
     console.error("获取概览数据失败:", error);
   }
 };
+watch(refreshSignal, async () => {
+  console.log("接收到刷新信号，更新数据...");
+  await getOverview();
+});
 
 onMounted(() => {
   getOverview();
@@ -72,7 +87,6 @@ onMounted(() => {
 onUnmounted(() => {
   if (timer) clearInterval(timer);
 });
-// const router = useRouter()
 </script>
 <template>
   <div
@@ -103,7 +117,34 @@ onUnmounted(() => {
       <div
         class="absolute top-3 left-4 text-white text-[18px] font-mono tracking-wider"
       >
-        赣州 1#机
+        <div class="relative inline-block">
+          <select
+            v-model="selectedMachine"
+            @change="handleMachineChange"
+            class=" border-none outline-none cursor-pointer ml-1 text-white rounded px-2 py-1 appearance-none"
+          >
+            <option value="1" selected>赣州 1#机</option>
+            <option value="2">赣州 2#机</option>
+          </select>
+          <!-- 自定义下拉箭头 -->
+          <div
+            class="absolute right-[-10px] top-1/2 transform -translate-y-1/2 pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
       <!-- 右上角时间 -->
       <div
@@ -156,7 +197,7 @@ onUnmounted(() => {
           </svg>
         </div>
         <div
-          @click="handleClose()"
+          @click="handleClose"
           class="w-7 h-7 flex items-center justify-center rounded-md hover:bg-red-500/80 transition"
           title="关闭"
         >
@@ -332,5 +373,15 @@ onUnmounted(() => {
 }
 img {
   display: block;
+}
+select option {
+  background: rgba(235, 231, 231, 0.1);
+  color: black;
+  padding: 8px;
+}
+
+select option:hover {
+  background: #5993f0 !important;
+  color: white !important;
 }
 </style>

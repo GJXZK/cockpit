@@ -2,10 +2,12 @@
 import Echart from "@/components/common/Echart.vue";
 import type { EChartsOption } from "echarts";
 import ChartHeader from "@/components/common/ChartHeader.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import turbineService, {
   type ThermalEfficiencyTrendData,
 } from "@/api/turbineService.ts";
+import { refreshSignal } from "@/util/eventBus";
+
 
 const thermalEfficiencyTrendData = ref<ThermalEfficiencyTrendData>();
 const timeLabels = ref<string[]>([]);
@@ -14,6 +16,11 @@ const getThermalEfficiencyTrend = async () => {
   thermalEfficiencyTrendData.value =
     await turbineService.getThermalEfficiencyTrend();
 };
+// 监听刷新信号
+watch(refreshSignal, async () => {
+  console.log('接收到刷新信号，更新数据...');
+  await getThermalEfficiencyTrend();
+});
 
 const chartOptions = ref<EChartsOption>({
   backgroundColor: "transparent",

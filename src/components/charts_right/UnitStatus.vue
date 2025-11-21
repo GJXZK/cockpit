@@ -2,17 +2,23 @@
 import Echart from "@/components/common/Echart.vue";
 import type { EChartsOption } from "echarts";
 import ChartHeader from "@/components/common/ChartHeader.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import turbineService, {
   type UnitDiagnosisData,
 } from "@/api/turbineService.ts";
+import { refreshSignal } from "@/util/eventBus";
 
 const unitDiagnosisData = ref<UnitDiagnosisData>();
 const timeLabels = ref<string[]>([]);
 
 const getUnitDiagnosis = async () => {
   unitDiagnosisData.value = await turbineService.getUnitDiagnosis();
+  processChartData();
 };
+watch(refreshSignal, async () => {
+  console.log("接收到刷新信号，更新数据...");
+  await getUnitDiagnosis();
+});
 
 const chartOptions = ref<EChartsOption>({
   backgroundColor: "transparent",
@@ -157,35 +163,71 @@ const processChartData = () => {
     if (series0) series0.data = validData;
   }
 };
+// 弹出框逻辑
+let showAlert = ref<boolean>(true);
+
+// 检查是否需要显示警报
+const checkAlert = () => {
+  const hdiValue =
+    unitDiagnosisData.value &&
+    unitDiagnosisData.value.health_degradation_index[0]
+      ? unitDiagnosisData.value.health_degradation_index[0]
+      : 0;
+  showAlert.value = hdiValue < 0.6;
+};
 
 onMounted(async () => {
   await getUnitDiagnosis();
   processChartData();
+  checkAlert()
 });
 </script>
 
 <template>
-  <div class="w-full h-full">
+  <div class=" w-full h-full relative">
     <ChartHeader title="机组状态诊断" />
     <div class="frame-bg">
       <!-- HDI状态说明 -->
       <div class="flex justify-center items-center space-x-6 mx-2 pt-2">
         <div class="flex items-center space-x-1">
-          <span class="text-green-400">●</span>
-          <span class="text-white text-[14px]">HDI 0-0.3 健康</span>
+          <span class="text-[#faad14]">●</span>
+          <span class="text-white text-[14px]">HDI 0-0.6 异常</span>
         </div>
         <div class="flex items-center space-x-1">
-          <span class="text-yellow-400">●</span>
-          <span class="text-white text-[14px]">HDI 0.3-0.6 异常</span>
-        </div>
-        <div class="flex items-center space-x-1">
-          <span class="text-orange-400">●</span>
-          <span class="text-white text-[14px]">HDI>0.6 预警</span>
+          <span class="text-[#ff7a45]">●</span>
+          <span class="text-white text-[14px]">HDI>0.6 正常</span>
         </div>
       </div>
 
       <div class="chart-box">
         <Echart :options="chartOptions" theme="dark" />
+      </div>
+    </div>
+    <!-- 警报弹窗 -->
+    <div v-if="showAlert" class="absolute w-full top-15">
+      <div
+        class="w-[70%] bg-red-900 border border-red-500 rounded-lg px-4 py-4 shadow-xl m-auto"
+      >
+        <div class="flex items-center">
+          <div
+            class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center mr-3"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white">提示：汽机振动达预警值</h3>
+        </div>
       </div>
     </div>
   </div>

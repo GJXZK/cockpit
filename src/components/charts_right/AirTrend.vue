@@ -2,10 +2,11 @@
 import Echart from "@/components/common/Echart.vue";
 import type { EChartsOption } from "echarts";
 import ChartHeader from "@/components/common/ChartHeader.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import turbineService, {
   type SteamRateTrendData,
 } from "@/api/turbineService.ts";
+import { refreshSignal } from "@/util/eventBus";
 
 const steamRateTrendData = ref<SteamRateTrendData>();
 const timeLabels = ref<string[]>([]);
@@ -13,6 +14,10 @@ const timeLabels = ref<string[]>([]);
 const getSteamRateTrend = async () => {
   steamRateTrendData.value = await turbineService.getSteamRateTrend();
 };
+watch(refreshSignal, async () => {
+  console.log('接收到刷新信号，更新数据...');
+  await getSteamRateTrend();
+});
 
 const chartOptions = ref<EChartsOption>({
   backgroundColor: "transparent",

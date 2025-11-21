@@ -4,12 +4,18 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import turbineService, {
   type SystemAvailabilityData,
 } from "@/api/turbineService.ts";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { refreshSignal } from "@/util/eventBus";
 
 const systemAvailabilityData = ref<SystemAvailabilityData>();
 const getSystemAvailability = async () => {
   systemAvailabilityData.value = await turbineService.getSystemAvailability();
 };
+// 监听刷新信号
+watch(refreshSignal, async () => {
+  console.log('接收到刷新信号，更新数据...');
+  await getSystemAvailability();
+});
 onMounted(() => {
   getSystemAvailability();
 });

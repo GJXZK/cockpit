@@ -6,7 +6,7 @@ import Echart from "@/components/common/Echart.vue";
 import ChartHeader from "@/components/common/ChartHeader.vue";
 import toFixedTwo from "@/util/utils.ts";
 import turbineService, { type FlowAdviceData } from "@/api/turbineService.ts";
-
+import { refreshSignal } from "@/util/eventBus";
 // 响应式数据
 let flowAdviceData = ref<FlowAdviceData>();
 const currentTotal = ref(0);
@@ -47,6 +47,10 @@ const flowAdvice = async () => {
     updateChart();
   }
 };
+watch(refreshSignal, async () => {
+  console.log('接收到刷新信号，更新数据...');
+  await flowAdvice();
+});
 
 const chartOptions = ref<echarts.EChartsOption>({
   backgroundColor: "transparent",

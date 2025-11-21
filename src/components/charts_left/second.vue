@@ -4,12 +4,17 @@ import SecondChild from "./second_child.vue";
 import turbineService, {
   type AutoParameterOptimizationData,
 } from "@/api/turbineService.ts";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { refreshSignal } from "@/util/eventBus";
 const autoParameterOptimizationData = ref<AutoParameterOptimizationData>();
 const getAutoParameterOptimization = async () => {
   autoParameterOptimizationData.value =
     await turbineService.getAutoParameterOptimization();
 };
+watch(refreshSignal, async () => {
+  console.log('接收到刷新信号，更新数据...');
+  await getAutoParameterOptimization();
+});
 
 const getBenchmark = (index: number): number => {
   return (

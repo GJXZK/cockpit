@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import Echart from "@/components/common/Echart.vue";
 import ChartHeader from "@/components/common/ChartHeader.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import turbineService, {
   type ColdEndDiagnosisData,
 } from "@/api/turbineService.ts";
+import { refreshSignal } from "@/util/eventBus";
 
 let coldEndOptimization = ref<ColdEndDiagnosisData>();
 const timeLabels = ref<string[]>([]);
@@ -12,6 +13,11 @@ const timeLabels = ref<string[]>([]);
 const getColdEndDiagnosis = async () => {
   coldEndOptimization.value = await turbineService.getColdEndDiagnosis();
 };
+watch(refreshSignal, async () => {
+  console.log('接收到刷新信号，更新数据...');
+  await getColdEndDiagnosis();
+});
+
 const chartRef = ref<HTMLDivElement | null>(null);
 
 // 处理图表数据函数
