@@ -65,7 +65,7 @@ const overviewData = ref<TurbineOverviewData | null>(null);
 
 const getOverview = async () => {
   try {
-    overviewData.value = await turbineService.getOverview();
+    overviewData.value = await turbineService.getOverview(2);
   } catch (error) {
     console.error("获取概览数据失败:", error);
   }
@@ -224,16 +224,16 @@ onUnmounted(() => {
           <div class="w-full h-[66%] px-[10px]">
             <div class="w-full h-full rounded">
               <div class="h-[50%]">
-                <first />
+                <first :mid="2"/>
               </div>
               <div class="h-[50%]">
-                <Second />
+                <Second :mid="2"/>
               </div>
             </div>
           </div>
           <div class="w-full h-[33%] px-[10px] pt-[10px] pb-[10px]">
             <div class="w-full h-full rounded">
-              <HotTrend />
+              <HotTrend :mid="2"/>
             </div>
           </div>
         </div>
@@ -334,10 +334,10 @@ onUnmounted(() => {
           <div class="w-full h-[33%] px-[10px] pt-[10px] pb-[10px]">
             <div class="w-full h-full rounded flex">
               <div class="w-[50%]">
-                <ELecTrend />
+                <ELecTrend :mid="2"/>
               </div>
               <div class="w-[50%]">
-                <SystemUseRate />
+                <SystemUseRate :mid="2"/>
               </div>
             </div>
           </div>
@@ -348,16 +348,16 @@ onUnmounted(() => {
           <div class="w-full h-[66%]">
             <div class="w-full h-full rounded">
               <div class="h-[50%]">
-                <UnitStatus></UnitStatus>
+                <UnitStatus :mid="2"></UnitStatus>
               </div>
               <div class="h-[50%]">
-                <ColdEndStatus />
+                <ColdEndStatus :mid="2"/>
               </div>
             </div>
           </div>
           <div class="w-full h-[33%] pt-[10px] pb-[10px]">
             <div class="w-full h-full rounded">
-              <AirTrend />
+              <AirTrend :mid="2"/>
             </div>
           </div>
         </div>

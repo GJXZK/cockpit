@@ -8,11 +8,15 @@ import turbineService, {
 } from "@/api/turbineService.ts";
 import { refreshSignal } from "@/util/eventBus";
 
+const props = withDefaults(defineProps<{ mid?: number }>(), {
+  mid: 1
+});
+
 const steamRateTrendData = ref<SteamRateTrendData>();
 const timeLabels = ref<string[]>([]);
 
 const getSteamRateTrend = async () => {
-  steamRateTrendData.value = await turbineService.getSteamRateTrend();
+  steamRateTrendData.value = await turbineService.getSteamRateTrend(props.mid);
 };
 watch(refreshSignal, async () => {
   console.log('接收到刷新信号，更新数据...');

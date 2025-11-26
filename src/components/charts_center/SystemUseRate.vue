@@ -7,9 +7,13 @@ import turbineService, {
 import { onMounted, ref, watch } from "vue";
 import { refreshSignal } from "@/util/eventBus";
 
+const props = withDefaults(defineProps<{ mid?: number }>(), {
+  mid: 1
+});
+
 const systemAvailabilityData = ref<SystemAvailabilityData>();
 const getSystemAvailability = async () => {
-  systemAvailabilityData.value = await turbineService.getSystemAvailability();
+  systemAvailabilityData.value = await turbineService.getSystemAvailability(props.mid);
 };
 // 监听刷新信号
 watch(refreshSignal, async () => {

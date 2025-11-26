@@ -72,64 +72,64 @@ export const turbineService = {
   /**
    * 获取汽轮机概览数据
    */
-  getOverview: (params?: TurbineParams): Promise<TurbineOverviewData> => {
-    return get('/api/turbine/overview', params);
+  getOverview: (mid: number = 1): Promise<TurbineOverviewData> => {
+    return get(`/api/turbine/overview?mid=${mid}`);
   },
 
   /**
    * 获取流量建议数据
    */
-  getFlowAdvice: (params?: TurbineParams): Promise<FlowAdviceData> => {
-    return get('/api/turbine/flow_advice', params);
+  getFlowAdvice: (mid: number = 1): Promise<FlowAdviceData> => {
+    return get(`/api/turbine/flow_advice?mid=${mid}`);
   },
 
   /**
    * 获取蒸汽率趋势数据
    */
-  getSteamRateTrend: (params?: TurbineParams): Promise<SteamRateTrendData> => {
-    return get('/api/turbine/steam_rate_trend', params);
+  getSteamRateTrend: (mid: number = 1): Promise<SteamRateTrendData> => {
+    return get(`/api/turbine/steam_rate_trend?mid=${mid}`);
   },
 
   /**
    * 获取机组发电效率趋势数据
    */
-  getThermalEfficiencyTrend: (params?: TurbineParams): Promise<ThermalEfficiencyTrendData> => {
-    return get('/api/turbine/thermal_efficiency_trend', params);
+  getThermalEfficiencyTrend: (mid: number = 1): Promise<ThermalEfficiencyTrendData> => {
+    return get(`/api/turbine/thermal_efficiency_trend?mid=${mid}`);
   },
 
   /**
    * 获取热耗率趋势数据
    */
-  getHeatRateTrend: (params?: TurbineParams): Promise<HeatRateTrendData> => {
-    return get('/api/turbine/heat_rate_trend', params);
+  getHeatRateTrend: (mid: number = 1): Promise<HeatRateTrendData> => {
+    return get(`/api/turbine/heat_rate_trend?mid=${mid}`);
   },
 
   /**
    * 获取冷端诊断数据
    */
-  getColdEndDiagnosis: (params?: TurbineParams): Promise<ColdEndDiagnosisData> => {
-    return get('/api/turbine/cold_end_diagnosis', params);
+  getColdEndDiagnosis: (mid: number = 1): Promise<ColdEndDiagnosisData> => {
+    return get(`/api/turbine/cold_end_diagnosis?mid=${mid}`);
   },
 
   /**
    * 获取单元诊断数据
    */
-  getUnitDiagnosis: (params?: TurbineParams): Promise<UnitDiagnosisData> => {
-    return get('/api/turbine/unit_diagnosis', params);
+  getUnitDiagnosis: (mid: number = 1): Promise<UnitDiagnosisData> => {
+    return get(`/api/turbine/unit_diagnosis?mid=${mid}`);
   },
 
   /**
    * 获取系统可用性状态
    */
-  getSystemAvailability: (params?: TurbineParams): Promise<SystemAvailabilityData> => {
-    return get('/api/turbine/system_availability', params);
+  getSystemAvailability: (mid: number = 1): Promise<SystemAvailabilityData> => {
+    return get(`/api/turbine/system_availability?mid=${mid}`);
   },
 
   /**
    * 获取自动参数优化数据
    */
-  getAutoParameterOptimization: (params?: TurbineParams): Promise<AutoParameterOptimizationData> => {
-    return get('/api/turbine/auto_parameter_optimization', params);
+  getAutoParameterOptimization: (mid: number = 1): Promise<AutoParameterOptimizationData> => {
+    return get(`/api/turbine/auto_parameter_optimization?mid=${mid}`);
   },
 };
 

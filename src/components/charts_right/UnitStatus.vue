@@ -8,11 +8,15 @@ import turbineService, {
 } from "@/api/turbineService.ts";
 import { refreshSignal } from "@/util/eventBus";
 
+const props = withDefaults(defineProps<{ mid?: number }>(), {
+  mid: 1,
+});
+
 const unitDiagnosisData = ref<UnitDiagnosisData>();
 const timeLabels = ref<string[]>([]);
 
 const getUnitDiagnosis = async () => {
-  unitDiagnosisData.value = await turbineService.getUnitDiagnosis();
+  unitDiagnosisData.value = await turbineService.getUnitDiagnosis(props.mid);
   processChartData();
 };
 watch(refreshSignal, async () => {
@@ -164,7 +168,7 @@ const processChartData = () => {
   }
 };
 // 弹出框逻辑
-let showAlert = ref<boolean>(true);
+let showAlert = ref<boolean>(false);
 
 // 检查是否需要显示警报
 const checkAlert = () => {
@@ -173,29 +177,42 @@ const checkAlert = () => {
     unitDiagnosisData.value.health_degradation_index[0]
       ? unitDiagnosisData.value.health_degradation_index[0]
       : 0;
-  showAlert.value = hdiValue < 0.6;
+  showAlert.value = hdiValue > 0.6;
 };
 
 onMounted(async () => {
   await getUnitDiagnosis();
   processChartData();
-  checkAlert()
+  checkAlert();
 });
 </script>
 
 <template>
-  <div class=" w-full h-full relative">
+  <div class="w-full h-full relative">
     <ChartHeader title="机组状态诊断" />
     <div class="frame-bg">
       <!-- HDI状态说明 -->
       <div class="flex justify-center items-center space-x-6 mx-2 pt-2">
-        <div class="flex items-center space-x-1">
-          <span class="text-[#faad14]">●</span>
-          <span class="text-white text-[14px]">HDI 0-0.6 异常</span>
+        <div class="space-x-1 flex flex-col items-center">
+          <div class="flex items-center">
+            <span class="text-[#419c51]">●</span>&nbsp
+            <span class=" text-white text-[14px]">HDI 0-0.3 健康</span>
+          </div>
+          <div class="text-[#c4d14b] text-[12px]">驾驶舱评分：90分</div>
         </div>
-        <div class="flex items-center space-x-1">
-          <span class="text-[#ff7a45]">●</span>
-          <span class="text-white text-[14px]">HDI>0.6 正常</span>
+        <div class="space-x-1 flex flex-col items-center">
+          <div class="flex items-center">
+            <span class="text-[#faad14]">●</span>&nbsp
+            <span class="text-white text-[14px]">HDI 0.3-0.6 正常</span>
+          </div>
+          <div class="text-[#c4d14b] text-[12px]">驾驶舱评分：60分</div>
+        </div>
+        <div class="space-x-1 flex flex-col items-center">
+          <div class="flex items-center">
+            <span class="text-[#ff7a45]">●</span>&nbsp
+            <span class="text-white text-[14px]">HDI>0.6 异常</span>
+          </div>
+          <div class="text-[#c4d14b] text-[12px]">驾驶舱评分：40分</div>
         </div>
       </div>
 

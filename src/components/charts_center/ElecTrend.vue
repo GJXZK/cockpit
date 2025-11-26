@@ -8,13 +8,16 @@ import turbineService, {
 } from "@/api/turbineService.ts";
 import { refreshSignal } from "@/util/eventBus";
 
+const props = withDefaults(defineProps<{ mid?: number }>(), {
+  mid: 1
+});
 
 const thermalEfficiencyTrendData = ref<ThermalEfficiencyTrendData>();
 const timeLabels = ref<string[]>([]);
 
 const getThermalEfficiencyTrend = async () => {
   thermalEfficiencyTrendData.value =
-    await turbineService.getThermalEfficiencyTrend();
+    await turbineService.getThermalEfficiencyTrend(props.mid);
 };
 // 监听刷新信号
 watch(refreshSignal, async () => {

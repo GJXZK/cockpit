@@ -7,11 +7,15 @@ import turbineService, {
 } from "@/api/turbineService.ts";
 import { refreshSignal } from "@/util/eventBus";
 
+const props = withDefaults(defineProps<{ mid?: number }>(), {
+  mid: 1
+});
+
 let coldEndOptimization = ref<ColdEndDiagnosisData>();
 const timeLabels = ref<string[]>([]);
 
 const getColdEndDiagnosis = async () => {
-  coldEndOptimization.value = await turbineService.getColdEndDiagnosis();
+  coldEndOptimization.value = await turbineService.getColdEndDiagnosis(props.mid);
 };
 watch(refreshSignal, async () => {
   console.log('接收到刷新信号，更新数据...');

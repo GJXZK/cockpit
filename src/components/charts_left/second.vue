@@ -6,10 +6,15 @@ import turbineService, {
 } from "@/api/turbineService.ts";
 import { onMounted, ref, watch } from "vue";
 import { refreshSignal } from "@/util/eventBus";
+
+const props = withDefaults(defineProps<{ mid?: number }>(), {
+  mid: 1
+});
+
 const autoParameterOptimizationData = ref<AutoParameterOptimizationData>();
 const getAutoParameterOptimization = async () => {
   autoParameterOptimizationData.value =
-    await turbineService.getAutoParameterOptimization();
+    await turbineService.getAutoParameterOptimization(props.mid);
 };
 watch(refreshSignal, async () => {
   console.log('接收到刷新信号，更新数据...');

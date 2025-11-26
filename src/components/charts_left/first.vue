@@ -7,6 +7,11 @@ import ChartHeader from "@/components/common/ChartHeader.vue";
 import toFixedTwo from "@/util/utils.ts";
 import turbineService, { type FlowAdviceData } from "@/api/turbineService.ts";
 import { refreshSignal } from "@/util/eventBus";
+
+const props = withDefaults(defineProps<{ mid?: number }>(), {
+  mid: 1
+});
+
 // 响应式数据
 let flowAdviceData = ref<FlowAdviceData>();
 const currentTotal = ref(0);
@@ -17,7 +22,7 @@ const seriesData_2 = ref<[number, number][]>([]);
 
 // 获取数据
 const flowAdvice = async () => {
-  flowAdviceData.value = await turbineService.getFlowAdvice();
+  flowAdviceData.value = await turbineService.getFlowAdvice(props.mid);
   console.log(flowAdviceData.value);
 
   if (flowAdviceData.value) {
